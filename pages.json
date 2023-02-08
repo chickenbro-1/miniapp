@@ -1,0 +1,82 @@
+{
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [
+		 
+		{
+			"name": "homePage",
+			"path": "pages/homePage/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/myError/myError",
+			"style": {
+				"navigationStyle": "custom"
+			}
+
+		}, {
+			"path": "pages/myCollection/myCollection",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/myNotes/myNotes",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/pastExam/pastExam",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"name": "personalCenter",
+			"path": "pages/personalCenter/index"
+		},
+		{
+			"name": "answerSheet",
+			"path": "pages/answerSheet/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}
+		
+
+	],
+	"globalStyle": {
+		"navigationStyle": "default",
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"borderStyle": "black",
+		"backgroundColor": "#F7F7F7",
+		"height": "50px",
+		"fontSize": "20px",
+		"iconWidth": "30px",
+		"spacing": "3px",
+		"blurEffect": "light",
+		"selectedColor": "#000000",
+		"color": "#CDCDCD",
+		"list": [{
+				"pagePath": "pages/homePage/index",
+				"iconPath": "static/lanhu_shouye/un_homepage.png",
+				"selectedIconPath": "static/lanhu_shouye/homepage.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/personalCenter/index",
+				"iconPath": "static/lanhu_shouye/un_presoncentre.png",
+				"selectedIconPath": "static/lanhu_shouye/personcentre.png",
+				"text": "个人中心"
+			}
+		]
+	}
+}

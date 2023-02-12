@@ -3,8 +3,7 @@
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
 	"pages": [
-		 
-		{
+		 {
 			"name": "homePage",
 			"path": "pages/homePage/index",
 			"style": {
@@ -45,9 +44,25 @@
 				"navigationStyle": "custom"
 			}
 		}
-		
-
-	],
+	    ,{
+			"name":"doNote",
+            "path" : "pages/doNote/doNote",
+            "style": {
+            	"navigationStyle": "custom"
+            }
+            
+        },
+		{
+		     "path" : "pages/settlement/settlement",
+			 "style": {
+			  	"navigationStyle": "custom"
+			 }
+		     
+		}
+        
+            
+        
+    ],
 	"globalStyle": {
 		"navigationStyle": "default",
 		"navigationBarTextStyle": "black",

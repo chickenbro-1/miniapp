@@ -118,9 +118,7 @@
 	</view>
 </template>
 <script>
-	import {
-		pathToBase64
-	} from '@/pages/common/image.js' //引入图片转base64js
+	import { pathToBase64 } from '@/pages/common/image.js' //引入图片转base64js
 	import navBar from "@/uni_modules/zhouWei-navBar/components/zhouWei-navBar/zhouWei-navBar.vue";
 	export default {
 		components: {

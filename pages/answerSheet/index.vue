@@ -82,18 +82,41 @@
 										</view>
 									</view>
 									<u-subsection :list="list" :current="curNow" mode="button" @change="sectionChange" ></u-subsection>
-									<view v-if="curNow==0">
+									<view v-if="curNow==0" style="padding-top: 20rpx;">
 										<!-- 题目解析 -->
 										<text>{{item.answerDoubt}}</text>
+										<text>问题反馈</text>
 									</view>
-									<view v-if="curNow==1">
+									<view v-if="curNow==1" style="padding-top: 20rpx;">
 										<!-- 精选总结-->
 										<text>{{item.summary}}</text>
 									</view>
-									<view v-if="curNow==2">
+									<view v-if="curNow==2" style="padding-top: 20rpx;" @click="doNote()">
 										<!-- 发表笔记-->
-										<text>你还没有笔记哦!</text>
-										<text>点击此处发表你个人专属笔记嗷</text>
+										<view style="display: flex;padding-left: 200rpx;padding-top: 15rpx;" v-if="item.myNote == undefined || item.myNote == null || item.myNote == ''">
+											<u--image fade="false" src="/static/publicationNote.png" width="30rpx" height="30rpx"></u--image>
+											<text style="padding-left:20rpx;">点击我发表笔记</text>
+										</view>
+										<view v-else-if="item.myNote != undefined || item.myNote != null || item.myNote != ''">
+											<view style="padding-top: 15rpx;">
+												<view>
+													{{item.myNote}}
+												</view>
+												<view style="display: flex;padding-top: 20rpx;" @tap.stop="editorNote(item.myNote)">
+													<view style="display: flex;padding-right: 50rpx;width: 200rpx;padding-left: 130rpx;">
+														<u--image fade="false" src="/static/publicationNote.png" width="30rpx" height="30rpx" ></u--image>
+														<text style="padding-left: 15rpx;">编辑</text>
+													</view>
+													<view style="display: flex;" @tap.stop="deleteNote">
+														<u--image fade="false" src="/static/delete.png" width="30rpx" height="30rpx"></u--image>
+														<text style="padding-left: 15rpx;">删除</text>
+													</view>
+													
+												</view>
+											</view>
+										</view>
+										
+										
 									</view>
 								</view>
 								
@@ -120,7 +143,7 @@
 						</view>
 					</view>
 					<view style="padding-left: 150rpx;padding-right: 150rpx;">
-						<u-button v-if="fillOut" text="提交试卷" color="linear-gradient(to right, rgb(66, 83, 216), rgb(213, 51, 186))"></u-button>
+						<u-button v-if="fillOut" text="提交试卷" color="#0AB99C" @click="settlement(dataList)"></u-button>
 					</view>
 					<view class="h-flex-x" @tap="showPopup = !showPopup" style="">
 						<uni-icons type="bars" size="18" color="#666"></uni-icons>
@@ -138,8 +161,8 @@
 							<view class="h-flex-x h-flex-center"
 								:class="{
 									'active':index == topicIndex,
-									'success':item.answerResult && (item.answer == item.answerResult),
-									'error':item.answerResult && (item.answer != item.answerResult)
+									'success':item.answerResult && judgeItems(item),
+									'error':item.answerResult && (!judgeItems(item)),
 								}"
 							>{{index+1}}</view>
 						</view>
@@ -167,6 +190,7 @@
 		components: {uniIcons},
 		data() {
 			return {
+				questionId:0,//当前题目id
 				curNow:0,
 				list:['题目解析','精选总结','我的笔记'],
 				notify:false,//弹窗提示用户选择选项
@@ -236,6 +260,77 @@
 			})
 		},
 		methods: {
+			//判断题目是否
+			judgeItems(item){
+				if(typeof(item.answerResult) == 'string'){
+					return item.answerResult && (item.answer == item.answerResult);
+				}else if(typeof(item.answerResult) == 'object'){
+					if(item.answerResult.length != item.answer.length){
+						return false;
+					}else{
+						var aR = Object.values(item.answerResult);
+						var a = Object.values(item.answer);
+						for(var i of a){
+							console.log(aR.indexOf(i))
+							if(aR.indexOf(i)== -1){
+								return false;
+							}
+						}
+						return true;
+					}
+				}
+				
+			},
+			//跳转结算页面
+			settlement(dataList){
+				
+				
+				uni.navigateTo({
+					url:'/pages/settlement/settlement',
+					success: function(res) {
+					  res.eventChannel.emit('data', { msg:dataList})
+					}
+				})
+			},
+			deleteNote(){
+				this.$set(this.dataList[this.topicIndex],"myNote",'');
+			},
+			editorNote(myNote){
+				let that = this;
+				uni.navigateTo({
+				  url: '/pages/doNote/doNote',
+				  events: {
+					someEvent: function(data) {
+						console.log(data["note"])
+						that.$set(that.dataList[that.topicIndex],"myNote",data["note"]);
+				    }
+				  },
+				  success: function(res) {
+				    res.eventChannel.emit('acceptDataFromOpenerPage', { msg:myNote})
+				  }
+				})
+			},
+			doNote(){
+				let that = this;
+				uni.navigateTo({
+				  url: '/pages/doNote/doNote',
+				  events: { 
+				    someEvent: function(data) {
+						console.log(data["note"])
+						that.$set(that.dataList[that.topicIndex],"myNote",data["note"]);
+				    }
+				  },
+				  // 发送通信方法
+				  success: function(res) {
+				    // 通过eventChannel向被打开页面传送数据
+				    // 其中含有两个参数，第一个是接收的函数名，第二个则是需要携带的参数
+					
+				    // res.eventChannel.emit('acceptDataFromOpenerPage', { data:})
+				  }
+				})
+				
+				
+			},
 			sectionChange(index){
 				this.curNow = index;
 			},
@@ -286,6 +381,7 @@
 			},
 			// 轮播图切换
 			onChange(e){
+				
 				// 非触摸事件不做轮播图状态更新
 				if(e.detail.source != "touch")return;
 				
@@ -324,6 +420,7 @@
 			},
 			// 监听答题
 			onAnswerSheet(type,index){
+				this.questionId = this.swiperList[this.swiperIndex].questionId
 				
 				if(index.length == 0){
 					this.$u.toast('请选择选项!');
@@ -408,7 +505,7 @@
 				}else if(item.type == 2){
 					if(item.answerResult != undefined){
 						for(var i of item.answer){
-							console.log(i)
+							
 							if((item.answerResult.indexOf(i) == -1) &&(sheetItem.value == i)){
 								return true;
 						}
